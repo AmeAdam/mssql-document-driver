@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq.Expressions;
 using Newtonsoft.Json;
 
 namespace MsSql.Document.Driver
@@ -22,6 +23,21 @@ namespace MsSql.Document.Driver
         public IEnumerable<T> FindAll()
         {
             var cmd = new SqlCommand { CommandText = $"select id,json from [{collectionName}]" };
+            foreach (var row in database.ExecuteReader(cmd))
+            {
+                yield return JsonConvert.DeserializeObject<T>(row.json);
+            }
+        }
+
+        public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
+        {
+            //var param = predicate.Parameters[0].Name;
+            var body = (BinaryExpression)predicate.Body;
+            var field = (MemberExpression) body.Left;
+            var value = (ConstantExpression) body.Right;
+
+            var cmd = new SqlCommand { CommandText = $"select id,json from [{collectionName}] where JSON_VALUE(json, '$.{field.Member.Name}')=@param" };
+            cmd.Parameters.Add("@param", SqlHelper.GetDbType(value.Type)).Value = value.Value;
             foreach (var row in database.ExecuteReader(cmd))
             {
                 yield return JsonConvert.DeserializeObject<T>(row.json);

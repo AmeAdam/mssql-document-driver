@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace MsSql.Document.Driver.Tests
@@ -29,14 +30,16 @@ namespace MsSql.Document.Driver.Tests
             {
                 Id = "u002",
                 Name = "Pawel",
-                Rank = 1012
+                Rank = 1012,
+                Address = new Address { Number = 1, Street = "abc"}
             };
 
             var user2 = new TestUser
             {
                 Id = "u003",
                 Name = "Adam",
-                Rank = 1013
+                Rank = 1013,
+                Address = new Address { Number = 2, Street = "def" }
             };
 
             users.InsertOne(user1); users.InsertOne(user2);
@@ -51,6 +54,18 @@ namespace MsSql.Document.Driver.Tests
             users.Delete(user1.Id);
 
             PrintAllUsers("Delete result");
+
+            var findTest = users.Find(u => u.Name == "Adam").FirstOrDefault();
+            Assert.IsNotNull(findTest);
+            Assert.AreEqual("u003", findTest.Id);
+
+            var findTest2 = users.Find(u => u.Rank == 1013).FirstOrDefault();
+            Assert.IsNotNull(findTest2);
+            Assert.AreEqual("u003", findTest2.Id);
+
+            //var findTest3 = users.Find(u => u.Address.Number == 2).FirstOrDefault();
+            //Assert.IsNotNull(findTest3);
+            //Assert.AreEqual("u003", findTest3.Id);
         }
 
         private void PrintAllUsers(string header)
@@ -70,9 +85,19 @@ namespace MsSql.Document.Driver.Tests
 
         public int Rank { get; set; }
 
+        public Address Address { get; set; }
+
         public override string ToString()
         {
             return $"{Id} {Name} {Rank}";
         }
+    }
+
+    public class Address
+    {
+        public string Street { get; set; }
+
+        public int Number { get; set; }
+
     }
 }
