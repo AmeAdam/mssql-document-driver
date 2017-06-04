@@ -46,7 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SqlHelper.cs" />
+    <Compile Include="SqlSchemaHelper.cs" />
+    <Compile Include="SqlTypeHelper.cs" />
     <Compile Include="IIdentifiable.cs" />
     <Compile Include="DatabaseClient.cs" />
     <Compile Include="DocumentCollection.cs" />

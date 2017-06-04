@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MsSql.Document.Driver
 {
-    internal static class SqlHelper
+    internal static class SqlTypeHelper
     {
         private static readonly Dictionary<Type, SqlDbType> TypeMap;
 
-        // Create and populate the dictionary in the static constructor
-        static SqlHelper()
+        static SqlTypeHelper()
         {
             TypeMap = new Dictionary<Type, SqlDbType>
             {
@@ -33,21 +29,14 @@ namespace MsSql.Document.Driver
             };
         }
 
-        // Non-generic argument-based method
         public static SqlDbType GetDbType(Type giveType)
         {
-            // Allow nullable types to be handled
             giveType = Nullable.GetUnderlyingType(giveType) ?? giveType;
-
             if (TypeMap.ContainsKey(giveType))
-            {
                 return TypeMap[giveType];
-            }
-
             throw new ArgumentException($"{giveType.FullName} is not a supported .NET class");
         }
 
-        // Generic version
         public static SqlDbType GetDbType<T>()
         {
             return GetDbType(typeof(T));

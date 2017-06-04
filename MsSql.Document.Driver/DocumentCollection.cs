@@ -16,8 +16,7 @@ namespace MsSql.Document.Driver
         {
             this.database = database;
             this.collectionName = collectionName;
-            var sql = $"IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'{collectionName}') BEGIN CREATE TABLE {collectionName}(id nvarchar(100) NOT NULL, json nvarchar(max) NOT NULL CONSTRAINT [PK_{collectionName}] PRIMARY KEY CLUSTERED (id ASC) ON [PRIMARY]) END";
-            database.ExecuteCommand(new SqlCommand(sql));
+            database.ExecuteCommand(SqlSchemaHelper.CreateCollectionIfNotExist(collectionName));
         }
 
         public IEnumerable<T> FindAll()
@@ -37,7 +36,7 @@ namespace MsSql.Document.Driver
             var value = (ConstantExpression) body.Right;
 
             var cmd = new SqlCommand { CommandText = $"select id,json from [{collectionName}] where JSON_VALUE(json, '$.{field.Member.Name}')=@param" };
-            cmd.Parameters.Add("@param", SqlHelper.GetDbType(value.Type)).Value = value.Value;
+            cmd.Parameters.Add("@param", SqlTypeHelper.GetDbType(value.Type)).Value = value.Value;
             foreach (var row in database.ExecuteReader(cmd))
             {
                 yield return JsonConvert.DeserializeObject<T>(row.json);
@@ -71,8 +70,7 @@ namespace MsSql.Document.Driver
 
         public void Drop()
         {
-            var sql = $"IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'{collectionName}') BEGIN DROP TABLE {collectionName} END";
-            database.ExecuteCommand(new SqlCommand(sql));
+            database.ExecuteCommand(SqlSchemaHelper.DropCollectionIfExist(collectionName));
         }
     }
 }
