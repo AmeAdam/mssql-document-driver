@@ -15,12 +15,35 @@ namespace MsSql.Document.Driver.Tests.Linq
         };
 
         [Test]
-        public void Equal()
+        public void Equals()
         {
             Expression<Func<TestUser, bool>> predicate = u => u.Name == "Abc";
             SqlLinqParser ec = new SqlLinqParser("TestUser", predicate, indexes);
             var cmd = ec.Parse();
             Assert.AreEqual("SELECT id, json FROM [TestUser] WHERE JSON_VALUE(json, '$.Name') = @param_0", cmd.CommandText);
+            Assert.AreEqual("Abc", cmd.Parameters[0].Value);
+            Console.WriteLine(cmd.CommandText);
+        }
+
+        [Test]
+        [Ignore("NULL query is not implemented yet")]
+        public void IsNull()
+        {
+            Expression<Func<TestUser, bool>> predicate = u => u.Name == null;
+            SqlLinqParser ec = new SqlLinqParser("TestUser", predicate, indexes);
+            var cmd = ec.Parse();
+            Assert.AreEqual("SELECT id, json FROM [TestUser] WHERE JSON_VALUE(json, '$.Name') = @param_0", cmd.CommandText);
+            Assert.IsNull(cmd.Parameters[0].Value);
+            Console.WriteLine(cmd.CommandText);
+        }
+
+        [Test]
+        public void NotEquals()
+        {
+            Expression<Func<TestUser, bool>> predicate = u => u.Name != "Abc";
+            SqlLinqParser ec = new SqlLinqParser("TestUser", predicate, indexes);
+            var cmd = ec.Parse();
+            Assert.AreEqual("SELECT id, json FROM [TestUser] WHERE JSON_VALUE(json, '$.Name') <> @param_0", cmd.CommandText);
             Assert.AreEqual("Abc", cmd.Parameters[0].Value);
             Console.WriteLine(cmd.CommandText);
         }

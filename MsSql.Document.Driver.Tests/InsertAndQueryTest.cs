@@ -65,10 +65,6 @@ namespace MsSql.Document.Driver.Tests
             var findTest2 = users.Find(u => u.Rank == 1013).FirstOrDefault();
             Assert.IsNotNull(findTest2);
             Assert.AreEqual("u003", findTest2.Id);
-
-            //var findTest3 = users.Find(u => u.Address.Number == 2).FirstOrDefault();
-            //Assert.IsNotNull(findTest3);
-            //Assert.AreEqual("u003", findTest3.Id);
         }
 
         private void PrintAllUsers(string header)

@@ -32,8 +32,9 @@ namespace MsSql.Document.Driver
         public static SqlDbType GetDbType(Type giveType)
         {
             giveType = Nullable.GetUnderlyingType(giveType) ?? giveType;
-            if (TypeMap.ContainsKey(giveType))
-                return TypeMap[giveType];
+            SqlDbType res;
+            if (TypeMap.TryGetValue(giveType, out res))
+                return res;
             throw new ArgumentException($"{giveType.FullName} is not a supported .NET class");
         }
 
