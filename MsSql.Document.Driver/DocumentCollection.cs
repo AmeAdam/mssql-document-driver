@@ -11,6 +11,7 @@ namespace MsSql.Document.Driver
     {
         private readonly DocumentDatabase database;
         private readonly string collectionName;
+        private Dictionary<string, string> indexes = new Dictionary<string, string> {{"Id", "Id"}};
 
         internal DocumentCollection(DocumentDatabase database, string collectionName)
         {
@@ -30,13 +31,15 @@ namespace MsSql.Document.Driver
 
         public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
         {
-            //var param = predicate.Parameters[0].Name;
-            var body = (BinaryExpression)predicate.Body;
-            var field = (MemberExpression) body.Left;
-            var value = (ConstantExpression) body.Right;
+            SqlLinqParser parser = new SqlLinqParser(collectionName, predicate, indexes);
+            var cmd = parser.Parse();
 
-            var cmd = new SqlCommand { CommandText = $"select id,json from [{collectionName}] where JSON_VALUE(json, '$.{field.Member.Name}')=@param" };
-            cmd.Parameters.Add("@param", SqlTypeHelper.GetDbType(value.Type)).Value = value.Value;
+            //var body = (BinaryExpression)predicate.Body;
+            //var field = (MemberExpression) body.Left;
+            //var value = (ConstantExpression) body.Right;
+
+            //var cmd = new SqlCommand { CommandText = $"select id,json from [{collectionName}] where JSON_VALUE(json, '$.{field.Member.Name}')=@param" };
+            //cmd.Parameters.Add("@param", SqlTypeHelper.GetDbType(value.Type)).Value = value.Value;
             foreach (var row in database.ExecuteReader(cmd))
             {
                 yield return JsonConvert.DeserializeObject<T>(row.json);

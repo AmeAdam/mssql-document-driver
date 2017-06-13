@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Linq\LinqTest.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SqlTestHelper.cs" />
     <Compile Include="TestModel\Address.cs" />
