@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace MsSql.Document.Driver.Tests
 {
     [TestFixture]
-    public class CreateSchema
+    public class CreateSchemaTest
     {
         private DatabaseClient dbClient;
         private string databaseName = "TestDatabase";
@@ -39,14 +39,14 @@ namespace MsSql.Document.Driver.Tests
         public void CreateCollection()
         {
             var database = dbClient.GetDatabase(databaseName);
-            Assert.IsFalse(sqlHelper.SqlTableExist("Users"));
-            var collection = database.GetCollection<TestUser>("Users");
+            Assert.IsFalse(sqlHelper.SqlTableExist("Person"));
+            var collection = database.GetCollection<Person>("Person");
 
-            Assert.IsTrue(sqlHelper.SqlTableExist("Users"));
-            Assert.IsNotNull(database.GetCollection<TestUser>("Users"));
+            Assert.IsTrue(sqlHelper.SqlTableExist("Person"));
+            Assert.IsNotNull(database.GetCollection<Person>("Person"));
 
             collection.Drop();
-            Assert.IsFalse(sqlHelper.SqlTableExist("Users"));
+            Assert.IsFalse(sqlHelper.SqlTableExist("Person"));
         }
 
 

@@ -1,6 +1,6 @@
 namespace MsSql.Document.Driver.Tests.TestModel
 {
-    public class TestUser : IIdentifiable
+    public class Person : IIdentifiable
     {
         public string Id { get; set; }
 

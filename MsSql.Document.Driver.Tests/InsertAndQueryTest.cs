@@ -9,7 +9,7 @@ namespace MsSql.Document.Driver.Tests
     public class InsertAndQueryTest
     {
         private DocumentDatabase db;
-        private DocumentCollection<TestUser> users;
+        private DocumentCollection<Person> users;
         private SqlTestHelper sqlHelper;
 
         [OneTimeSetUp]
@@ -17,7 +17,7 @@ namespace MsSql.Document.Driver.Tests
         {
             sqlHelper = new SqlTestHelper("InsertSomeDataTest");
             db = new DatabaseClient(Settings.Host).GetDatabase("InsertSomeDataTest");
-            users = db.GetCollection<TestUser>("users");
+            users = db.GetCollection<Person>("users");
         }
 
         [OneTimeTearDown]
@@ -29,7 +29,7 @@ namespace MsSql.Document.Driver.Tests
         [Test]
         public void InsertSomeData()
         {
-            var user1 = new TestUser
+            var user1 = new Person
             {
                 Id = "u002",
                 Name = "Pawel",
@@ -37,7 +37,7 @@ namespace MsSql.Document.Driver.Tests
                 Address = new Address { Number = 1, Street = "abc"}
             };
 
-            var user2 = new TestUser
+            var user2 = new Person
             {
                 Id = "u003",
                 Name = "Adam",
